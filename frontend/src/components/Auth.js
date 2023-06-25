@@ -1,7 +1,12 @@
 import { Box, Button, TextField , Typography } from '@mui/material'
 import React, { useState } from 'react'
+import { useDispatch} from 'react-redux';
 import axios from "axios";
+import {useNavigate} from 'react-router-dom'
+import { authAction } from './../store/index';
 const Auth = () => {
+  const navigate=useNavigate();
+  const dispatch=useDispatch();
   const [inputs, setinputs] = useState({
     name:"",email:"",password:""
   })
@@ -14,20 +19,25 @@ const Auth = () => {
     }))
   }
 
-const sendRequest=async ()=>{
-  const res=await axios.post("http://localhost:5000/api/user/login",{
-    email:inputs.email,
+const sendRequest=async (type="login")=>{
+  const res=await axios.post(`http://localhost:5000/api/user/${type}`,{
+  name:inputs.name,  
+  email:inputs.email,
     password:inputs.password
   }).catch(err=> console.log(err));
 
   const data=await res.data;
-  console.log(data); 
+  return data; 
 }
 
   const handleSubmit=(e)=>{
     e.preventDefault();
-    console.log(inputs);
-    sendRequest();
+    console.log(inputs);  
+    if(isSignup)
+      sendRequest("signup").then((data)=>localStorage.setItem("userId",data.user._id)).then(()=>dispatch(authAction.login())).then(()=>navigate("/blogs")).then(data=>console.log(data));
+    else
+      sendRequest().then((data)=>localStorage.setItem("userId",data.user._id)).then(()=>dispatch(authAction.login())).then(()=>navigate("/blogs")).then(data=>console.log(data));
+      
   }
   return (
     <div>
