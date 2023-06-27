@@ -10,7 +10,7 @@ const Blog = ({title,description,imageURL,userName}) => {
         avatar={
           <Avatar
            sx={{ bgcolor: "red"}}>
-            {userName}
+            {userName.charAt(0)}
           </Avatar>
         }
         
@@ -24,7 +24,7 @@ const Blog = ({title,description,imageURL,userName}) => {
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-           {description}
+        <b>{userName}</b> {": "} {description}
         </Typography>
       </CardContent>
        
