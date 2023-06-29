@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <AppBar position="sticky" sx={{background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(104,171,130,1) 83%, rgba(0,212,255,1) 100%);"}}>
       <Toolbar>
-        <Typography variant="h4">AppBar</Typography>
+        <Typography variant="h4">Blog App</Typography>
        { islogedIn && <Box display="flex" marginLeft={"auto"} marginRight={"auto"}>
           <Tabs textColor="inherit"  value={value} onChange={(e,val)=>setValue(val)}>
             <Tab LinkComponent={Link} to={"/blogs"} label="All Blogs"/>
