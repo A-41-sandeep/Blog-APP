@@ -21,8 +21,7 @@ const Header = () => {
         </Box>}
        
         <Box display="flex" marginLeft="auto">
-        { !islogedIn && <> <Button LinkComponent={Link} to={"/auth"} variant="contained" sx={{margin:1,borderRadius:10}}>Login</Button>
-          <Button LinkComponent={Link} to={"/auth"} variant="contained" sx={{margin:1,borderRadius:10}}>Signup</Button> </>}
+        { !islogedIn &&  <Button LinkComponent={Link} to={"/auth"} variant="contained" sx={{margin:1,borderRadius:10}}>Login/Signup</Button>}
           
           
           { islogedIn && <Button onClick={()=>dispatch(authAction.logout())} LinkComponent={Link} to={"/auth"} variant="contained" sx={{margin:1,borderRadius:10}}>Logout</Button>}

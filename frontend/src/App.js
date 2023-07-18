@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Header from "./components/Header";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Blogs from "./components/Blogs";
 import Auth from "./components/Auth";
 import UserBlogs from "./components/UserBlogs";
@@ -9,6 +9,7 @@ import AddBlog from './components/AddBlog';
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from "./store";
 function App() {
+  const navigate=useNavigate();
   const dispatch=useDispatch();
   const islogedIn=useSelector(state=>state.islogedIn);
   console.log(islogedIn);
@@ -16,6 +17,7 @@ function App() {
     if(localStorage.getItem("userId"))
     {
       dispatch(authAction.login());
+      navigate("/blogs");
     }
   },[dispatch]);
   return <React.Fragment>

@@ -10,7 +10,7 @@ const Auth = () => {
   const [inputs, setinputs] = useState({
     name:"",email:"",password:""
   })
-  const [isSignup,setIsSignup]=useState(false);
+  const [isSignup,setIsSignup]=useState(true);
   const handleChange=(e)=>
   {
     setinputs((prevState)=>({
