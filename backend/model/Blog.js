@@ -17,7 +17,12 @@ const Schema=new mongoose.Schema({
         type:mongoose.Types.ObjectId,
         ref:"User",
         required:true
-    }
+    },
+    likes:[{
+        type:mongoose.Types.ObjectId,
+        ref:"User",
+        required:true
+    }]
 });
 
 export  default mongoose.model("Blog",Schema);

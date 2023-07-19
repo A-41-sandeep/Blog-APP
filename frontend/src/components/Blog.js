@@ -1,7 +1,8 @@
 import { Avatar, Box, Card, CardContent, CardHeader, CardMedia, IconButton, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // import { useStyles } from './utils';
@@ -10,6 +11,7 @@ const Blog = ({isUser,title,description,imageURL,userName,id}) => {
   const handleEdit=()=>{
      navigate(`/myBlogs/${id}`);
   }
+  
   const deleteRequest=async()=>{
     const res=await axios.delete(`http://localhost:5000/api/blog/${id}`).catch(err=>console.log(err));
     const data=await res.data;
@@ -19,6 +21,39 @@ const Blog = ({isUser,title,description,imageURL,userName,id}) => {
      deleteRequest().then(()=> navigate("/")).then(()=> navigate("/myBlogs"));
   }
 
+const [isLiked,setIsLiked]=useState(false);
+const [likeCount,setLikeCount]=useState(0);
+
+useEffect(()=>{
+  getlikes().then((data)=>{
+    setIsLiked(data.likes.includes(localStorage.getItem("userId")));
+    setLikeCount(data.likes.length);
+  })
+},[]);
+
+const getlikes=async()=>{
+  const res=await axios.get(`http://localhost:5000/api/blog/${id}`);
+  const data=await res.data.blog;
+  return data;
+}
+
+const  handleLike=()=>{
+  likeRequest().then((data)=>{
+    setLikeCount(data.likes.length);
+    console.log(data)});
+  setIsLiked(!isLiked);
+
+}
+
+const likeRequest=async()=>{
+
+    const res=await axios.put(`http://localhost:5000/api/blog/update/${id}/like`,{
+      userId:localStorage.getItem("userId")
+    }).
+    catch(err=>console.log(err))
+    const data=await res.data.blog;
+    return data;
+}
   return (
 
     <div>
@@ -60,6 +95,11 @@ const Blog = ({isUser,title,description,imageURL,userName,id}) => {
         <b>{userName}</b> {": "} {description}
         </Typography>
       </CardContent>
+
+      <Box display={'flex'}>
+        <IconButton><StarsOutlinedIcon onClick={handleLike} color={isLiked?"primary":"inherit"}/></IconButton>
+        <Typography sx={{marginLeft:'5px',marginTop:'5px'}}>{likeCount}</Typography>
+      </Box>
        
     </Card>
     </div>

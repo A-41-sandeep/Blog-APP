@@ -62,9 +62,39 @@ export const updateBlog=async (req,res,next)=>{
     } 
     if(!blog)
     {
-        res.status(500).json({message:"unable to update the Blog"});
+        return   res.status(500).json({message:"unable to update the Blog"});
     }
     return res.status(200).json({blog});
+}
+
+export const updateLike=async(req,res,next)=>{
+    const blogId=req.params.id;
+    const {userId}=req.body;
+    
+    let blog;
+    try {
+        blog=await Blog.findById(blogId);
+    } catch (error) {
+        console.log(error);
+    }
+    if(!blog)
+    {
+        return  res.status(500).json({message:"unable to update the like"});
+    }
+    let flag=0;
+    blog.likes.forEach(element => {
+        if(element.equals(userId))
+            flag=1;
+        });
+    if(flag===1)
+    {
+       blog.likes=blog.likes.filter(val=> !(val.equals(userId)));  
+    }
+    else{
+        blog.likes.push(userId);
+    }
+    blog.save();
+    return   res.status(200).json({blog});
 }
 
 export const getBlogById=async (req,res,next)=>{
@@ -77,8 +107,8 @@ export const getBlogById=async (req,res,next)=>{
         
     }
     if(!blog)
-        {res.status(404).json({message:"Blog Not Found"});}
-    res.status(200).json({blog});
+        {return res.status(404).json({message:"Blog Not Found"});}
+     return res.status(200).json({blog});
 }
 
 
@@ -95,8 +125,8 @@ export const deleteBlogById=async (req,res,next)=>{
         
     }
     if(!blog)
-        {res.status(500).json({message:"Blog Not Found"});}
-    res.status(200).json({message:"Blog deleted"});
+        {return res.status(500).json({message:"Blog Not Found"});}
+    return res.status(200).json({message:"Blog deleted"});
 }
 
 
