@@ -16,7 +16,12 @@ const userSchema =new mongoose.Schema({
         required:true,
         minlength:6
     }
-    ,blogs:[{type:mongoose.Types.ObjectId,ref:"Blog",required:true}]
+    ,blogs:[{type:mongoose.Types.ObjectId,ref:"Blog",required:true}],
+    notification:[{
+        type:mongoose.Types.ObjectId,ref:"User",
+        required:true
+    }]
+
     }
 );
 

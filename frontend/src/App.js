@@ -8,6 +8,7 @@ import BlogDetails from './components/BlogDetails';
 import AddBlog from './components/AddBlog';
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from "./store";
+import AddNotification from "./components/AddNotification";
 function App() {
   const navigate=useNavigate();
   const dispatch=useDispatch();
@@ -30,7 +31,9 @@ function App() {
        <> <Route path="/blogs" element={<Blogs/>}/>
         <Route path="/myBlogs" element={<UserBlogs/>}/>
         <Route path="/myBlogs/:id" element={<BlogDetails/>}/>
-        <Route path="/add" element={<AddBlog/>}/></>
+        <Route path="/add" element={<AddBlog/>}/>
+        <Route path="/notification" element={<AddNotification/>}/> 
+        </>
 }
 
 </Routes>

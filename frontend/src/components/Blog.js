@@ -40,7 +40,11 @@ const getlikes=async()=>{
 const  handleLike=()=>{
   likeRequest().then((data)=>{
     setLikeCount(data.likes.length);
-    console.log(data)});
+    // console.log(data)
+  }
+    );
+  if(!isLiked)
+    notificationRequest();
   setIsLiked(!isLiked);
 
 }
@@ -54,6 +58,18 @@ const likeRequest=async()=>{
     const data=await res.data.blog;
     return data;
 }
+
+const notificationRequest= async()=>{
+  const userId=localStorage.getItem("userId");
+  const res=await axios.put(`http://localhost:5000/api/user/notificationupdate/${userId}`,{
+    blogId:id
+  }).catch(err=>console.log(err));
+
+  const data=await res.data.notification;
+  return data;
+  
+   }
+
   return (
 
     <div>
