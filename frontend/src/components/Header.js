@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AppBar, Typography ,Toolbar,Box,Button, Tabs,Tab} from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { authAction } from './../store/index';
 
-const Header = () => {
+const Header = ({disp,setDisp}) => {
   const [value,setValue]=useState();
   const islogedIn=useSelector(state=>state.islogedIn);
   const dispatch=useDispatch();
+    
+
+  
   return (
     <AppBar position="sticky" sx={{background:"linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(104,171,130,1) 83%, rgba(0,212,255,1) 100%);"}}>
       <Toolbar>
@@ -17,7 +20,7 @@ const Header = () => {
             <Tab LinkComponent={Link} to={"/blogs"} label="All Blogs"/>
             <Tab LinkComponent={Link} to={"/myBlogs"} label="My Blogs"/>
             <Tab LinkComponent={Link} to={"/add"} label="Add Blog"/>
-            <Tab LinkComponent={Link} to={"/notification"} label="Notifications"/>
+            <Tab  onClick={()=>setDisp(false)} LinkComponent={Link} to={"/notification"} label={<><span  style={{ color:"red" ,display:disp? 'block' : 'none'}}> new </span>Notifications</>}/>
           </Tabs>
         </Box>}
        

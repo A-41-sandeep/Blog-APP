@@ -8,7 +8,7 @@ export const getAllBlogs=async (req,res,next)=>{
     try {
         blogs=await Blog.find().populate("user");
     } catch (error) {
-        return console.log(err);
+        return console.log(error);
     }
 
     if(!blogs)
@@ -101,7 +101,7 @@ export const getBlogById=async (req,res,next)=>{
     const blogId=req.params.id;
     let blog;
     try {
-        blog=await Blog.findById(blogId);
+        blog=await Blog.findById(blogId).populate("user");
     } catch (error) {
         return console.log(error);
         

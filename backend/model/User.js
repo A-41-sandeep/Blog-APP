@@ -20,7 +20,11 @@ const userSchema =new mongoose.Schema({
     notification:[{
         type:mongoose.Types.ObjectId,ref:"User",
         required:true
-    }]
+    }],
+    socketId:{
+        type:String,
+        require:true
+    }
 
     }
 );

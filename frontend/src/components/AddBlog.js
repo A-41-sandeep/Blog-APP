@@ -1,16 +1,29 @@
 import { Box,  InputLabel, TextField, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // import { useStyles } from './utils';
 const labelStyles={mb:1,mt:2,fontSize:'24px',fontWeight:'bold'};
-const AddBlog = () => {
+
+
+const AddBlog = ({setDisp,socket}) => {
   // const classes= useStyles();
   const navigate=useNavigate();
   const [inputs, setinputs] = useState({
     title:"",description:"",imageURL:""
   })
+  useEffect(() => {
+    
+    const yourPostLikedHandler = () => {
+       setDisp(true);
+    };
+    socket?.on("yourPostLiked", yourPostLikedHandler);
+
+    return () => {
+      socket?.off('yourPostLiked', yourPostLikedHandler);
+    };
+  }, [socket]);
 
   const handleChange=(e)=>{
     setinputs((prevState)=>({

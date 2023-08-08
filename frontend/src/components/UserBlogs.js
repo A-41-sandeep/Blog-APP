@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import Blog from './Blog';
-const UserBlogs = () => {
+const UserBlogs = ({setDisp,socket}) => {
   const [blogs,setBlogs]=useState();
   const id=localStorage.getItem("userId");
   const sendRequest=async ()=>{
@@ -14,6 +14,18 @@ const UserBlogs = () => {
     sendRequest().then((data)=>setBlogs(data.blogs));
   },[]);
   console.log(blogs);
+
+  useEffect(() => {
+    
+    const yourPostLikedHandler = () => {
+       setDisp(true);
+    };
+    socket?.on("yourPostLiked", yourPostLikedHandler);
+
+    return () => {
+      socket?.off('yourPostLiked', yourPostLikedHandler);
+    };
+  }, [socket]);
   return (
     <div>
       {" "}

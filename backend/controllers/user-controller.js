@@ -15,13 +15,27 @@ export const getAllUsers = async (req, res, next) => {
   return res.status(200).json({ users });
 };
 
+export const getUserById=async (req,res,next)=>{
+  const id=req.params.id;
+  let user;
+  try{
+   user=await User.findById(id)
+  }
+  catch(error)
+  {
+    console.log(error);}
+  if(!user)
+    return res.status(404).json({message:"user not found"});
+  return res.status(200).json({user});
+}
+
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   let existingUser;
   try {
     existingUser = await User.findOne({ email });
-  } catch (error) {
+  } catch (err) {
     return console.log(err);
   }
 
@@ -38,7 +52,8 @@ const user = new User({
     name,
     email,
     password:hashedPassword,
-    blogs:[]
+    blogs:[],
+    socketId:""
   });
   try {
     await user.save();
@@ -55,7 +70,7 @@ export const login=async (req,res,next)=>{
     let existingUser;
     try {
         existingUser=await User.findOne({email});
-    } catch (error) {
+    } catch (err) {
         return console.log(err);
     }
     if(!existingUser)
@@ -96,3 +111,18 @@ export const updateNotification=async(req,res,next)=>{
       const notification=user.notification;
       return res.status(200).json({notification}); 
   }
+
+  export const deleteNotifications=async(req,res,next)=>{
+    const userId=req.params.id;
+    const user=await User.findByIdAndUpdate(userId,{
+      notification:[]}).catch(err=>console.log(err));
+
+    if(!user)
+    {
+      return res.status(404).json({message:"unable to delete notification"});
+    }
+    return res.status(200).json({message:"notifications deleted successfully"});
+  }
+  
+
+  

@@ -6,7 +6,7 @@ import StarsOutlinedIcon from '@mui/icons-material/StarsOutlined';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // import { useStyles } from './utils';
-const Blog = ({isUser,title,description,imageURL,userName,id}) => {
+const Blog = ({socket,isUser,title,description,imageURL,userName,id}) => {
   const navigate=useNavigate();
   const handleEdit=()=>{
      navigate(`/myBlogs/${id}`);
@@ -36,16 +36,41 @@ const getlikes=async()=>{
   const data=await res.data.blog;
   return data;
 }
+ 
+const getSocketId=async()=>{
+  const res=await axios.get(`http://localhost:5000/api/blog/${id}`);
+  const data=await res.data.blog.user.socketId;
+   return data;
+}
 
-const  handleLike=()=>{
-  likeRequest().then((data)=>{
+const getUserName=async()=>{
+  const myId=localStorage.getItem("userId");
+  const res=await axios.get(`http://localhost:5000/api/user/${myId}`);
+  const data=await res.data.user;
+  return data;
+}
+
+const  handleLike=async()=>{
+  await likeRequest().then((data)=>{
     setLikeCount(data.likes.length);
     // console.log(data)
-  }
-    );
+  });
+
   if(!isLiked)
+   {
     notificationRequest();
+    let userName;
+    getUserName().then((data)=>userName=data.name);
+    getSocketId().then((data)=>{
+    socket.emit("postLiked",{
+      userName,
+      socketId:data
+   })});
+
+  }
+
   setIsLiked(!isLiked);
+
 
 }
 
