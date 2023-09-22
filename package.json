@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@mui/styles": "^5.13.2",
-    "mongoose": "^7.3.0"
-  }
-}
