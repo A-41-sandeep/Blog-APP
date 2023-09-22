@@ -1,6 +1,6 @@
-import Blog from "../model/Blog.js";
 import User from "../model/User.js";
 import bcrypt from "bcrypt";
+import {generateToken} from "../utils/GenerateWebToken.js";
 
 export const getAllUsers = async (req, res, next) => {
   let users;
@@ -32,97 +32,45 @@ export const getUserById=async (req,res,next)=>{
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  let existingUser;
   try {
-    existingUser = await User.findOne({ email });
-  } catch (err) {
-    return console.log(err);
-  }
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'User already exists with this email.' });
+    }
 
-  if (existingUser) {
-    return res
-      .status(400)
-      .json({ message: "user already registered! Login Instead" });
-  }
-const saltRounds=bcrypt.genSaltSync(10);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ name, email, password: hashedPassword });
+    await newUser.save();
 
-const hashedPassword= bcrypt.hashSync(password,saltRounds);
-
-const user = new User({
-    name,
-    email,
-    password:hashedPassword,
-    blogs:[],
-    socketId:""
-  });
-  try {
-    await user.save();
-  } catch (err) {
-    return console.log(err);
+    res.status(200).json({ userId: newUser._id,token:generateToken(newUser._id), message: 'User registered successfully' });
+    
+  } catch (error) {
+    res.status(500).json({ message: 'Registration failed'});
   }
-  return res.status(201).json({ user });
 };
 
 
 export const login=async (req,res,next)=>{
-    const {email,password}=req.body;
+  const { email, password } = req.body;
 
-    let existingUser;
-    try {
-        existingUser=await User.findOne({email});
-    } catch (err) {
-        return console.log(err);
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ message: 'Authentication failed' });
     }
-    if(!existingUser)
-    {
-        return res.status(404).json({message:"user doesn't exist!"});
+
+    // Compare passwords
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: 'Authentication failed' });
     }
-    const checkPassword=bcrypt.compareSync(password,existingUser.password);
-    if(checkPassword)
-        return res.status(200).json({message:"login successfully!",user:existingUser});
-    return res.status(400).json({message:"Incorrect Password"});
+
+    res.status(200).json({  userId: user._id,token:generateToken(user._id),message: 'Login successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Authentication failed' });
+  }
 } 
-
-export const updateNotification=async(req,res,next)=>{
-  const userId=req.params.id;
-  const blogId=req.body.blogId;
-  const blog=await Blog.findById(blogId);
-
-  const user=await User.findByIdAndUpdate(blog.user,{
-    $push:{notification:userId}},{new:true}).catch(err=>console.log(err));
-  
-   
-  if(!user)
-    return res.status(500).json({message:"unable to update notification"});
-  await user.populate('notification');
-  const Notification=user.notification;
-  const latestNotification=Notification[Notification.length-1].name;
-  
-  return res.status(200).json({notification:latestNotification});
-  
-  }
-
-  export const getNotifications=async(req,res,next)=>{
-    const userId=req.params.id;
-    const user=await User.findById(userId);
-    if(!user)
-      return res.status(404).json({message:"user doesn't exist"});
-    await user.populate("notification"); 
-      const notification=user.notification;
-      return res.status(200).json({notification}); 
-  }
-
-  export const deleteNotifications=async(req,res,next)=>{
-    const userId=req.params.id;
-    const user=await User.findByIdAndUpdate(userId,{
-      notification:[]}).catch(err=>console.log(err));
-
-    if(!user)
-    {
-      return res.status(404).json({message:"unable to delete notification"});
-    }
-    return res.status(200).json({message:"notifications deleted successfully"});
-  }
-  
-
-  
